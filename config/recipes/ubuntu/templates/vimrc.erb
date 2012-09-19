@@ -1,0 +1,16 @@
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
+
+if has("autocmd")
+  filetype plugin indent on
+endif
+
+set showcmd             " Show (partial) command in status line.
+set showmatch           " Show matching brackets.
+set smartcase           " Do smart case matching
+
+set paste
+set statusline=%F%m%r%h%w\ [format=%{&ff}]\ [type=%Y]\ [pos=%04l,%04v][%p%%]\ [len=%L]
+set laststatus=2
+

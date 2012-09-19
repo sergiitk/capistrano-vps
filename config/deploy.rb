@@ -1,25 +1,22 @@
-set :application, "set your application name here"
-set :repository,  "set your repository location here"
 
-set :scm, :subversion
-# Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
+require 'capistrano_colors'
 
-role :web, "your web-server here"                          # Your HTTP server, Apache/etc
-role :app, "your app-server here"                          # This may be the same as your `Web` server
-role :db,  "your primary db-server here", :primary => true # This is where Rails migrations will run
-role :db,  "your slave db-server here"
+unless exists?(:host)
+  puts "Pleace specify host by providing -S host=you.server.ip.or.name."
+  exit
+end
 
-# if you want to clean up old releases on each deploy uncomment this:
-# after "deploy:restart", "deploy:cleanup"
+system = "ubuntu"
+load "config/recipes/#{system}/base"
+load "config/recipes/#{system}/system"
+load "config/recipes/#{system}/user"
+load "config/recipes/#{system}/postfix"
 
-# if you're still using the script/reaper helper you will need
-# these http://github.com/rails/irs_process_scripts
+role :server, host
+role :local, "#{ENV['USER']}@localhost"
 
-# If you are using Passenger mod_rails uncomment this:
-# namespace :deploy do
-#   task :start do ; end
-#   task :stop do ; end
-#   task :restart, :roles => :app, :except => { :no_release => true } do
-#     run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
-#   end
-# end
+default_run_options[:pty] = true
+default_run_options[:shell] = '/bin/bash'
+ssh_options[:forward_agent] = true
+
+set :current_user, ENV['USER'] unless exists?(:current_user)
